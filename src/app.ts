@@ -4,31 +4,51 @@ import {
     createExpressServer,
     useContainer as setRoutingControllersContainer,
 } from 'routing-controllers';
-import { useContainer as setClassValidatorContainer } from 'class-validator';
+import path from 'path';
 import { Container } from 'typedi';
 import { Application } from 'express';
-import Connection from './database/Connection';
-import { ExampleController } from './controllers/ExampleController';
+import { configure, format, transports } from 'winston';
+import environment from './environment';
+import DBConnection from './database/DBConnection';
 
-const DB = new Connection();
+/*
+ * Setup IoC Container
+ * */
+const DB = new DBConnection();
+Container.set('database', DB);
+setRoutingControllersContainer(Container);
 
+/*
+ * Setup winston logger
+ * */
+configure({
+    transports: [
+        new transports.Console({
+            level: environment.log.level,
+            handleExceptions: true,
+            format:
+                environment.node !== 'development'
+                    ? format.combine(format.json())
+                    : format.combine(format.colorize(), format.simple()),
+        }),
+    ],
+});
 /*
  * Setup Express App
  * */
 const app: Application = createExpressServer({
     cors: true, // CORS
     classTransformer: true, // class-transformer package to create class instances from plain data
-    defaultErrorHandler: false,
+    defaultErrorHandler: true,
 
     /* API HANDLERS */
-    controllers: [ExampleController],
+    controllers: [
+        path.join(__dirname, './controllers/*Controller.ts'),
+        path.join(__dirname, './auth/AuthController.ts'),
+    ],
+    middlewares: [path.join(__dirname, './middlewares/*Middleware.global.ts')],
+    interceptors: [path.join(__dirname, './interceptors/*Interceptor.ts')],
 });
 
-/*
- * Setup IoC Container
- * */
-Container.set('database', DB);
-setClassValidatorContainer(Container);
-setRoutingControllersContainer(Container);
-
-app.listen(4000);
+// Run app
+app.listen(80);

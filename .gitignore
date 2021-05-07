@@ -19,7 +19,6 @@ Desktop.ini
 
 # npm
 node_modules
-package-lock.json
 *.log
 *.gz
 
@@ -29,3 +28,8 @@ coverage
 
 # Benchmarking
 benchmarks/graphs
+
+
+# APP
+dist/
+.env

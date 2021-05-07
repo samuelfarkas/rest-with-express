@@ -1,14 +1,13 @@
-import { Get, JsonController } from 'routing-controllers';
+import { Controller, Get } from 'routing-controllers';
 import { ExampleService } from '../services/ExampleService';
-import { Service } from 'typedi';
+import { Example } from '../models/Example';
 
-@Service()
-@JsonController('/example')
+@Controller()
 export class ExampleController {
     constructor(private readonly exampleService: ExampleService) {}
 
     @Get('/')
-    async getExample() {
+    async getExample(): Promise<Example[]> {
         return this.exampleService.test();
     }
 }

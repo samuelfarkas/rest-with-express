@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+docker-compose --project-name rest_express up --build -V -d

@@ -1,8 +1,8 @@
 import { Container } from 'typedi';
-import Connection from '../database/Connection';
+import DBConnection from '../database/DBConnection';
 import { Model } from 'sequelize-typescript';
 
-export function InjectModelDecorator(model: typeof Model) {
+export function InjectModel(model: typeof Model) {
     return function (object: any, propertyName: string, index?: number) {
         Container.registerHandler({
             object,
@@ -10,7 +10,7 @@ export function InjectModelDecorator(model: typeof Model) {
             index,
             value: (container) => {
                 return container
-                    .get<Connection>('database')
+                    .get<DBConnection>('database')
                     .connection.getRepository(
                         (model as unknown) as new () => Model
                     );

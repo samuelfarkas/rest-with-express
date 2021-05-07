@@ -1,15 +1,15 @@
 import { Service } from 'typedi';
-import { InjectModelDecorator } from '../decorators/InjectModel.decorator';
 import { Example } from '../models/Example';
+import { InjectModel } from '../decorators/InjectModel.decorator';
 
 @Service()
 export class ExampleService {
     constructor(
-        @InjectModelDecorator(Example)
+        @InjectModel(Example)
         private readonly exampleModel: typeof Example
     ) {}
 
-    async test() {
+    async test(): Promise<Example[]> {
         return this.exampleModel.findAll();
     }
 }
