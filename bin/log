@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-docker logs rest_express_api_1 -f
+docker logs rest_with_express_api_1 -f
